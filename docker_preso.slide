@@ -152,6 +152,18 @@ Shared Data:
 E.g. image processing service
 
 
+* Persistent Data
+
+X-as-a-service Data:
+
+- Any storage which is consumed as-a-Service
+- DBaaS
+- RDS, DynamoDB
+- Trove
+- Object Storage
+- S3
+- Swift
+
 
 * Title of slide or section (must have asterisk)
 
