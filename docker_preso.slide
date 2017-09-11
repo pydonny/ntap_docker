@@ -1,0 +1,620 @@
+NetApp and Containers
+Where we are in September 2017
+
+Donald Casson
+Super Tuesday
+@iggby
+donald.casson@netapp.com
+
+* Agenda
+-	What are and Why containers?
+-	How it works?
+-	Basic construction
+-	Vendors – (Docker etc.)
+-	How Kubernetes and others work with Containers
+-	Implementation with NetApp – What problems do we solve
+-	Competitive Landscape (i.e. Does Pure have it?  D/EMC?, HP?)
+-	What do we have that is unique?
+
+* What are and Why containers?
+
+* What are and Why containers?
+Containers are not virtual machines!
+.image img/not_vms.png _ 350
+
+Virtual Machines:
+
+- VMs are relatively large, composed of virtual hardware, a full OS, and the application, including dependencies
+
+Containers:
+
+- A container is just the application and its dependencies
+- It runs as an isolated process in user space on the host OS
+
+
+* What are and Why containers
+
+- Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications
+- Docker enables applications to be quickly assembled from components and eliminates friction between dev, test, QA, and production
+- Do one thing, do it well
+- Ship faster, run anywhere
+.play hello.bat
+
+* Applications are hard
+
+.image img/app_mono.png _ _
+
+* Applications are hard
+
+Monolithic applications:
+
+- Hard to update - single massive code base, turns into the big ball of spaghetti
+- Single dimension of scalability
+
+Waterfall development practices:
+
+- Static, linear phases
+- Requirements
+- Analysis
+- Design
+- Code
+- Test
+- Deploy
+
+* Simplify the Problem
+.image img/app_soa.png _ _
+
+* Simplify the Problem
+
+Service-Oriented Architecture:
+
+- New term = microservices
+- Each component is independently developed and scaled
+
+Everything is a platform:
+
+- DevOps
+- Continuous Integration – Finding and fixing bugs faster
+- Continuous Deployment – Releasing faster
+
+
+* Virtualization as a First Step
+
+.image img/vmware.jpg
+
+* Virtualization as a First Step
+
+Virtual machines are easier than physical:
+
+- Light weight, deploy quickly
+- Decoupled from hardware
+
+Declarative configuration management:
+
+- Puppet, Chef, Salt, Ansible
+- Remove manual process from deployment and configuration operations
+
+AWS and OpenStack made self-service mainstream
+
+* (Re)Enter Containers
+
+.image img/docker.png
+
+* (Re)Enter Containers
+
+- Lightweight, fast, portable
+- A lot like Object Oriented Programming
+- Inheritance, Encapsulation, Abstraction
+- Now consumable by mortals!
+- DevOps + Microservices + Containers = Maintainability and Scalability
+- Containers decouple
+
+* Containers should be ephemeral
+The container produced by the image your Dockerfile defines should be as ephemeral as possible. By “ephemeral,” we mean that it can be stopped and destroyed and a new one built and put in place with an absolute minimum of set-up and configuration.
+
+You may want to take a look at the Processes section of the 12 Factor app methodology to get a feel for the motivations of running containers in such a stateless fashion.
+
+.link https://12factor.net/processes Process
+
+* The 12 Factors
+.link https://12factor.net/ 12factor.net
+.image img/12factors.png 500 _
+
+
+* Persistent Data
+Configuration Data:
+
+- Typically not stored with the application
+- Database details
+- Declaration of purpose
+- Specific tasking
+- Passed into application or accessed at startup
+- Environment variables
+- Etcd, Zookeeper, Consul, etc.
+
+* Persistent Data
+
+Instance Data:
+
+- Data created by a container instance which does not need to persist beyond the life of the container
+- Cache data
+- Staging data / scratch space
+- Container density can lead to high IO requirements for local drives
+
+* Persistent Data
+
+Shared Data:
+
+- Data which is shared across multiple instances of a container image
+- Apache htdocs folder
+- Data which is shared across services
+- Against 12 Factor principles
+E.g. image processing service
+
+
+
+* Title of slide or section (must have asterisk)
+
+Some Text
+
+** Subsection
+
+- bullets
+- more bullets
+- a bullet with
+
+*** Sub-subsection
+
+Some More text
+
+  Preformatted text
+  is indented (however you like)
+
+Further Text, including invocations like:
+
+.image image.jpg
+.background image.jpg
+.iframe http://foo
+.link http://foo label
+
+.caption _Gopher_ by [[https://www.instagram.com/reneefrench/][Renée French]]
+
+Again, more text* Conversion rules
+
+A non-constant value x can be converted to type T in any of these cases:
+
+- x is assignable to T.
+- x's type and T have identical underlying types.
+- x's type and T are unnamed pointer types and their pointer base types have identical underlying types.
+- ...
+
+* Conversion rules
+
+A non-constant value x can be converted to type T in any of these cases:
+
+- x is assignable to T.
+- *ignoring*struct*tags*, x's type and T have identical underlying types.
+- *ignoring*struct*tags*, x's type and T are unnamed pointer types and their pointer base types have identical underlying types.
+- ...
+
+* Ports to other platforms
+
+* Ports to other platforms
+
+32-bit MIPS
+
+- big-endian (`linux/mips`)
+- little-endian (`linux/mipsle`) - requires Floating Point Unit
+
+Go on DragonFly BSD now requires DragonFly 4.4.4+.
+
+Go on OpenBSD now requires OpenBSD 5.9+.
+
+Plan 9 is now better!
+
+* Ports to other platforms
+
+Go 1.8 supports OS X 10.8+. Likely last time we support 10.8.
+
+ARM:
+
+- Go 1.8 is the last version to support ARMv5E and ARMv6 processors.
+
+- Go 1.9 will require ARMv6K. Will it work on my platform?
+
+    go tool dist -check-armv6k
+
+* Tools
+
+* Fix
+
+Fixes the import path `"golang.org/x/net/context"` to `"context"`.
+
+
+
+Simply run the command below:
+
+
+Drop the `-diff` flag to rewrite the files.
+
+* Vet
+
+"Vet is stricter in some ways and looser where it previously caused false positives."
+
+Example of extra check:
+
+
+`govet` detects the problem statically:
+
+
+* SSA everywhere!
+
+The SSA backend:
+
+- generates more compact and efficient code
+- is a better platform for optimizations
+
+For 32-bit ARM systems this means 20-30% speed up!
+
+For others (where SSA was used already) gains are 0-10%.
+
+* SSA everywhere
+
+.image state-of-go/img/benchmark.png _ 800
+
+* Default GOPATH
+
+Yay!
+
+When `GOPATH` is not defined, the tool will use:
+
+- `$HOME/go` on Unix
+- `%USERPROFILE%\go` on Windows
+
+* go bug
+
+Easier way to create bugs including all relevant information.
+
+Example:
+
+
+* Runtime
+
+* Detection of concurrent map accesses
+
+Improvement on Go 1.6.
+
+
+Outputs:
+
+	fatal error: concurrent map read and map write
+	fatal error: concurrent map writes
+
+* Mutex Contention Profiling
+
+Profile your benchmarks and the contention on your mutexes.
+
+    go test bench=. -mutexprofile=mutex.out
+
+
+Alternatively, activate contention profiling with this new method.
+
+    runtime.SetMutexProfileFraction
+
+_Note_: For now `sync.RWMutex` is not profiled.
+
+* Mutex Contention Profiling
+
+Let's write a program to count how many times each factor appears from 2 to N.
+
+Example N = 10:
+
+    Factorizations:
+
+        2:  2
+        3:  3
+        4:  2 2
+        5:  5
+        6:  2 3
+        7:  7
+        8:  2 2 2
+        9:  3 3
+        10: 2 5
+
+    Count:
+
+        2: 8
+        3: 4
+        5: 2
+        7: 1
+
+* Mutex Contention Profiling
+
+Which option is better?
+
+Wide protected region:
+
+
+Narrow protected region:
+
+
+* Benchmark
+
+    $ go test -bench=.
+
+#    BenchmarkNarrowSection/10-8         	  300000	      5085 ns/op
+#    BenchmarkNarrowSection/100-8        	   20000	     77458 ns/op
+#    BenchmarkNarrowSection/1000-8       	    2000	    909658 ns/op
+#    BenchmarkNarrowSection/10000-8      	     100	  21230633 ns/op
+#
+#    BenchmarkWideSection/10-8           	  200000	      5323 ns/op
+#    BenchmarkWideSection/100-8          	   10000	    103228 ns/op
+#    BenchmarkWideSection/1000-8         	    1000	   2131861 ns/op
+#    BenchmarkWideSection/10000-8        	      10	 103575793 ns/op
+
+.image state-of-go/img/mutex_noprofile.png _ 1000
+
+* Benchmarking with Mutex Contention
+
+    $ go test -bench=. -mutexprofile=mutex.out
+
+#    BenchmarkNarrowSection/10-8         	  300000	      5464 ns/op
+#    BenchmarkNarrowSection/100-8        	   10000	    108583 ns/op
+#    BenchmarkNarrowSection/1000-8       	    1000	   1378379 ns/op
+#    BenchmarkNarrowSection/10000-8      	     100	  32828827 ns/op
+#
+#    BenchmarkWideSection/10-8           	  200000	      7155 ns/op
+#    BenchmarkWideSection/100-8          	   10000	    197001 ns/op
+#    BenchmarkWideSection/1000-8         	     300	   4339571 ns/op
+#    BenchmarkWideSection/10000-8        	       5	 303559562 ns/op
+
+.image state-of-go/img/mutex_profile.png _ 1000
+
+* Analyzing the Mutex Contention Profile
+
+    $ go tool pprof runtime.test mutex.out
+    Entering interactive mode (type "help" for commands)
+    (pprof) list
+
+    0      5.38s (flat, cum) 43.97% of Total
+    .          .     34:				mu.Lock()
+    .          .     35:				m[f]++
+    .      5.38s     36:				mu.Unlock()
+
+    0      6.86s (flat, cum) 56.03% of Total
+    .          .     53:			mu.Lock()
+    .          .     54:			for _, f := range factors(i) {
+    .          .     55:				m[f]++
+    .          .     56:			}
+    .      6.86s     57:			mu.Unlock()
+
+* So much contention ...
+
+* Contention by CPU
+
+.image state-of-go/img/mutex_procs.png _ 1000
+
+* Comparing it to sequential algorithm
+
+.image state-of-go/img/mutex_all.png _ 1000
+
+* Comparing it to sequential algorithm (zoom)
+
+.image state-of-go/img/mutex_all_zoom.png _ 1000
+
+* Performance
+
+* GC history in tweets
+
+* go 1.5
+
+.image state-of-go/img/gct1.png _ 900
+
+* go 1.6
+
+.image state-of-go/img/gct2.png _ 900
+
+* go 1.7
+
+.image state-of-go/img/gct4.png _ 900
+
+* go 1.8 (beta 1)
+
+.image state-of-go/img/gct5.png _ 700
+
+* go 1.8 (beta 1) CPU
+
+.image state-of-go/img/gctcpu.png _ 800
+
+* defer is faster
+
+    name         old time/op  new time/op  delta
+    Defer-4       101ns � 1%    66ns � 0%  -34.73%  (p=0.000 n=20+20)
+    Defer10-4    93.2ns � 1%  62.5ns � 8%  -33.02%  (p=0.000 n=20+20)
+    DeferMany-4   148ns � 3%   131ns � 3%  -11.42%  (p=0.000 n=19+19)
+
+.image state-of-go/img/defer.png _ 500
+
+* cgo is also faster!
+
+    name       old time/op  new time/op  delta
+    CgoNoop-8  93.5ns � 0%  51.1ns � 1%  -45.34%  (p=0.016 n=4+5)
+
+.image state-of-go/img/cgo.png _ 500
+
+Source: [[https://dave.cheney.net/2016/11/19/go-1-8-toolchain-improvements][dave.cheney.net]]
+
+* Changes to the standard library
+
+* Sorting
+
+Exercise:
+
+Given a slice of `Person`
+
+    var p []Person
+
+Print the slice sorted by name, age, and SSN.
+
+Easy, right?
+
+* Sorting
+
+Well, you forgot about this part.
+
+
+
+* sort.Slice
+
+Since Go 1.8 you can simply write this:
+
+
+
+Also new `SliceStable` and `SliceIsSorted`.
+
+* Benchmark
+
+    N=1 go test -bench=.
+        BenchmarkSortSort-8     10000000               145 ns/op
+        BenchmarkSortSlice-8    10000000               190 ns/op
+    N=10 go test -bench=.
+        BenchmarkSortSort-8      2000000               918 ns/op
+        BenchmarkSortSlice-8     1000000              1776 ns/op
+    N=100 go test -bench=.
+        BenchmarkSortSort-8       100000             16588 ns/op
+        BenchmarkSortSlice-8       50000             39035 ns/op
+    N=1000 go test -bench=.
+        BenchmarkSortSort-8         5000            320951 ns/op
+        BenchmarkSortSlice-8        3000            446677 ns/op
+    N=10000 go test -bench=.
+        BenchmarkSortSort-8          500           3644480 ns/op
+        BenchmarkSortSlice-8         300           4962263 ns/op
+    N=100000 go test -bench=.
+        BenchmarkSortSort-8           30          43573572 ns/op
+        BenchmarkSortSlice-8          20          60861706 ns/op
+
+.caption Benchmark ran on my MacBook Pro (8 cores), simply indicative.
+
+* Benchmark
+
+.image state-of-go/img/bench.png _ 800
+
+* Benchmark (log/log)
+
+.image state-of-go/img/bench_log.png _ 800
+
+
+* Plugins
+
+Define a plugin:
+
+
+Then build it:
+
+    go build -buildmode=plugin
+
+_Note_: This currently works only on Linux.
+
+* Plugins
+
+
+
+* Plugins demo
+
+Demo video: [[https://twitter.com/francesc/status/827851085943566336][twitter.com/francesc]]
+
+Source code: [[https://github.com/campoy/golang-plugins][github.com/campoy/golang-plugins]]
+
+* HTTP shutdown
+
+Added `Shutdown` method to `http.Server`.
+
+Example:
+
+Call `Shutdown` when a signal is received:
+
+
+
+* HTTP shutdown
+
+Check why the server stopped.
+
+
+
+
+* HTTP/2
+
+`http.Response` now satisfies the `http.Pusher` interface.
+
+    type Pusher interface {
+        Push(target string, opts *PushOptions) error
+    }
+
+A simple example:
+
+
+
+* HTTP/2
+
+
+
+HTTP: [[http://localhost:8080]]
+HTTP/2: [[https://localhost:8081]]
+
+* HTTP/2
+
+HTTP
+
+.image state-of-go/img/http.png _ 800
+
+HTTP/2
+
+.image state-of-go/img/http2.png _ 800
+
+* More context support
+
+Since Go 1.7:
+
+- net
+- net/http
+- os/exec
+
+Since Go 1.8:
+
+- http.Server.Shutdown
+- database/sql
+- net.Resolver
+
+* A couple more changes too
+
+.image state-of-go/img/more.png _ 1000
+.caption [[https://beta.golang.org/doc/go1.8][Go 1.8 release notes]]
+
+* The community
+
+* Women Who Go
+
+.image state-of-go/img/wwg.png _ 800
+.caption 16 chapters already! [[http://www.womenwhogo.org]]
+
+* Go meetups
+
+.image state-of-go/img/meetups.png _ 900
+.caption Gophers all around the world! [[http://go-meetups.appspot.com]]
+
+* Conferences:
+
+- [[https://fosdem.org/2017/][FOSDEM]], right here right now!
+- [[http://www.gophercon.in/][GopherCon India]], Feb 25-25th
+- [[https://gophercon.com/][Gophercon Denver]], Jul 12-15th
+- [[http://golanguk.com/][Golang UK]], August 16th-18th
+- [[http://2017.dotgo.eu/][dotGo]], Nov 6th
+
+* Go 1.8 release party, February 16th
+
+Go 1.8 ships soon!
+
+Go meetups are organising to hold a [[https://github.com/golang/go/wiki/Go-1.8-release-party][release party]] on the 16th of February.
+
+.image state-of-go/img/party-gopher.png _ 300
+.caption Join the party!!!
