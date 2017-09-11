@@ -165,6 +165,9 @@ X-as-a-service Data:
 - Swift
 
 * Introduction to the NetApp Docker Volume Plugin
+.image img/intro_ndvp.png 560 _
+
+* Introduction to the NetApp Docker Volume Plugin
 
 - Transparently consume NetApp storage
 
@@ -175,43 +178,74 @@ Drivers for all NetApp primary storage platforms:
 - E-Series
 
 Open source!
-.link http://github.com/netapp/netappdvp 
+.link http://github.com/netapp/netappdvp
 
 
-* Title of slide or section (must have asterisk)
+* Diving into nDVP
+Create a Volume
 
-Some Text
+.code code/docker.sh /CREATE VOL/,/END CREATE/
 
-** Subsection
+nDVP will:
 
-- bullets
-- more bullets
-- a bullet with
+- Create a volume on specified aggr
+- Thin provisioned, Snapshot Policy = none
+- Create a LUN in the volume
+- OS type = Linux, Thin provisioned
 
-*** Sub-subsection
+* Diving into nDVP
+Using a Volume
 
-Some More text
+.code code/docker.sh /USE VOL/,/END USE/
 
-  Preformatted text
-  is indented (however you like)
+nDVP will:
 
-Further Text, including invocations like:
+- Add host iqn to igroup
+- Map LUN if needed
+- Rescan host adapters to attach LUN
+- Format with ext4 (if needed)
+- Mount at desired host location
 
-.image image.jpg
-.background image.jpg
-.iframe http://foo
-.link http://foo label
+* Diving into nDVP
+Removing a container
 
-.caption _Gopher_ by [[https://www.instagram.com/reneefrench/][Renée French]]
+.code code/docker.sh /REMOVE CONTAINER/,/END CONTAINER/
 
-Again, more text* Conversion rules
+Docker will:
 
-A non-constant value x can be converted to type T in any of these cases:
+- Stop the container and clean up namespaces
+- Remove COW layers
 
-- x is assignable to T.
-- x's type and T have identical underlying types.
-- x's type and T are unnamed pointer types and their pointer base types have identical underlying types.
-- ...
+nDVP will:
+
+- Unmount the LUN from the filesystem
+
+* Diving into nDVP
+Removing a volume
+
+.code code/docker.sh /REMOVE VOL/,/END REMOVE/
+
+nDVP will:
+
+- Offline the LUN
+- Destroy the LUN
+- Rescan on host to disconnect
+- Remove the volume
+
+* Diving into nDVP
+Moving a container
+
+
+- Moving a container consists of stopping it on one host and starting on another
+Host 1 nDVP will:
+
+- Unmount the LUN from the filesystem
+Host 2 nDVP will:
+
+- Find the existing volume, making no modifications
+- Add host to igroup
+- Rescan HBA and mount volume
+
 
 * Conversion rules
 
