@@ -246,14 +246,19 @@ Host 2 nDVP will:
 - Add host to igroup
 - Rescan HBA and mount volume
 
+* Orchestrators - An Introduction to Kubernetes Storage & Trident
+(switch to PowerPoint)
 
-* Conversion rules
+* Key Takeaways & Future...
 
-A non-constant value x can be converted to type T in any of these cases:
+Containers are supposed to be ephemeral/stateless:
 
-- x is assignable to T.
-- *ignoring*struct*tags*, x's type and T have identical underlying types.
-- *ignoring*struct*tags*, x's type and T are unnamed pointer types and their pointer base types have identical underlying types.
-- ...
+- The NetApp goodness is about providing storage which follows the container for its life
+- The state full data associated with a container can be configured through the Dockerfile
+- No matter which node in cluster the data vol's will follow
 
-* Ports to other platforms
+Who should I be talking to:
+
+- At the moment most new apps and some old will be being dockerised
+- Dev's will be your best friend today
+- As the tools and ecosystem mature Docker will become a key mechanism for software delivery to all levels of an organization
