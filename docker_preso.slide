@@ -10,11 +10,9 @@ donald.casson@netapp.com
 -	What are and Why containers?
 -	How it works?
 -	Basic construction
--	Vendors – (Docker etc.)
 -	How Kubernetes and others work with Containers
 -	Implementation with NetApp – What problems do we solve
--	Competitive Landscape (i.e. Does Pure have it?  D/EMC?, HP?)
--	What do we have that is unique?
+-	Key takeways and future..
 
 * What are and Why containers?
 
